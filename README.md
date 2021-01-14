@@ -43,3 +43,20 @@ Use these steps to clone from SourceTree, our client for using the repository co
 4. Open the directory you just created to see your repository’s files.
 
 Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+
+
+
+Host
+ec2-52-203-182-92.compute-1.amazonaws.com
+Database
+dad01o250dir39
+User
+reyjpwdqjxpmqz
+Port
+5432
+Password
+000779a0f0359213b4b43f72f3dc23483d22bd3b688bd4a8778cb79f764d49cd
+URI
+postgres://reyjpwdqjxpmqz:000779a0f0359213b4b43f72f3dc23483d22bd3b688bd4a8778cb79f764d49cd@ec2-52-203-182-92.compute-1.amazonaws.com:5432/dad01o250dir39
+Heroku CLI
+heroku pg:psql postgresql-fluffy-06132 --app rakf
