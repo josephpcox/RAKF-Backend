@@ -4,10 +4,9 @@ from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from app.resources import routes
-from app.resources.models import db,User
+from app.resources.models import db
 api = Api()
 bcrypt = Bcrypt()
-db = SQLAlchemy()
 
 api.add_resource(routes.Login,'/login')
 api.add_resource(routes.Register,'/register')
@@ -22,4 +21,6 @@ def create_app(config_name):
         app.config.from_object(DevelopmentConfig)
     api.init_app(app)
     bcrypt.init_app(app)
+    with app.app_context():
+        db.init_app(app)
     return app
