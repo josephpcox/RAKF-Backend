@@ -2,7 +2,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc
 from datetime import datetime
 
-from sqlalchemy.orm import relationship, backref
 
 db = SQLAlchemy()
 
@@ -17,8 +16,42 @@ class User(db.Model):
     deleted = db.Column(db.Boolean, default=False, nullable=True, unique=False)
     update_date = db.Column(db.DateTime, default=datetime.utcnow())
     created_date = db.Column(db.DateTime, default=datetime.utcnow())
-    user_id_fk = relationship("permission_membership.user_id", backref="parent", passive_deletes=True)
+    # user_id_fk = relationship("permission_membership.user_id")
 
+    def __init__(self,first_name,last_name,email,password):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password = password
+    
+    def save_user(self):
+        db.session.add(self)
+        db.session.commit()  # SQLalchemy will do update or insert depending on weather the row exists or not
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()  # delete the user from the database
+
+    def get_json(self):
+        return {'first name': self.first_name, 'last name': self.last_name, 'email': self.email}
+
+    @classmethod
+    def register(cls,user_data):
+        new_user = User(**user_data)
+        new_user.save_user()
+        return True
+
+    @classmethod
+    def get_user_by_email(cls,email):
+        user=cls.query.filter_by(email=email).first()
+        return user.get_json()
+        
+
+    @classmethod
+    def delete_user(cls,email):
+        user = cls.query.filter_by(email=email).first()
+        user.delete()
+        return True
 
 class PermissionMembership(db.Model):
     __tablename__ = 'permission_membership'
@@ -33,8 +66,8 @@ class PermissionGroupMeta(db.Model):
     group_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     priority = db.Column(db.Integer, nullable=True, default=0)
-    group_id_fk = relationship("permission_entries.group_id", backref="parent", passive_deletes=True)
-    group_id_fk_2 = relationship("permission_membership.group_id", backref="parent", passive_deletes=True)
+    # group_id_fk = relationship("permission_entries.group_id", backref="parent", passive_deletes=True)
+    # group_id_fk_2 = relationship("permission_membership.group_id", backref="parent", passive_deletes=True)
 
 
 class PermissionEntries(db.Model):

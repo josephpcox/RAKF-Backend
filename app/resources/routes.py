@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restful import Resource,reqparse
 from flask_bcrypt import Bcrypt
 from flask import jsonify, request
 from flask_jwt_extended import (
@@ -7,7 +7,10 @@ from flask_jwt_extended import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc
-from app.resources.models import User
+from app.resources.models import(
+    User, PermissionEntries,PermissionGroupMeta,
+    PermissionMembership,Fish,Event
+)
 
 
 class Login(Resource):
@@ -26,7 +29,7 @@ class Login(Resource):
 
         user = db.session.query(User).filter_by(email=email).first()
 
-        if not user or not bcrypt.check_password_hash(user.password, password):
+        if not user or not Bcrypt.check_password_hash(user.password, password):
             return jsonify({"msg": "Bad username or password"}), 401
 
         # Identity can be any data that is json serializable
@@ -34,28 +37,50 @@ class Login(Resource):
         return jsonify(access_token=access_token), 200
 
 class Register(Resource):
-    # @app.route('/register', methods=['POST'])
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', type=str, help='email is required', required=True)
+        request_data = parser.parse_args(strict=True)
+        user = User.get_user_by_email(request_data['email'])
+        if not user:
+            msg = 'error in deleting user'
+            status = 400
+            return msg, status
+        status = 200
+        return user, status
+
+    # CRUD-Create
     def post(self):
-        if not request.is_json:
-            return jsonify({"msg": "Missing JSON in request"}), 400
+        parser = reqparse.RequestParser()
+        parser.add_argument('first_name', type=str, help='first name is required.', required=True)
+        parser.add_argument('last_name', type=str, help='last name is required.', required=True)
+        parser.add_argument('email', type=str, help='email is required.', required=True)
+        parser.add_argument('password', type=str, help='password is required', required=True)
+        requested_data = parser.parse_args(strict=True)
+        success = User.register(requested_data)  # create the new user
+        if success:
+              # store the user in the database
+            msg = 'user has been created'  # return message and ok status code back to client
+            status = 200
+        else:
+            msg = 'error in entering new user into the databse'
+            status = 400
+        return msg,status
 
-        user = User(
-            email=request.json.get('email', None),
-            # decode the hash to prevent is encoded twice
-            password=bcrypt.generate_password_hash(request.json.get('password', None)).decode('utf8'),
-            first_name=request.json.get('first_name', None),
-            last_name=request.json.get('last_name', None)
-        )
+    # CRUD-Delete
+    def delete(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', type=str, help='email is required', required=True)
+        request_data = parser.parse_args(strict=True)
+        success = User.delete_user(request_data['email'])
+        if success:
+            msg = 'User has been deleted'
+            status = 200
+        else:
+            msg = 'error in deleting user'
+            status = 400
 
-        try:
-
-            db.session.add(user)
-            db.session.commit()
-
-            return jsonify({"msg": "Registered successfully"}), 201
-
-        except exc.IntegrityError:
-            return jsonify({"msg": "A user is already registered with that email address"}), 409
+        return msg,status
 
 
     # Protect a view with jwt_required, which requires a valid access token
@@ -70,4 +95,4 @@ class Protected(Resource):
 
 class Index(Resource):
     def get(self):
-        return "hellow world"
+        return "hello world"
