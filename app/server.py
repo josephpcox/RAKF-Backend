@@ -4,9 +4,9 @@ from flask_restful import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from app.resources import routes
-from app.resources.models import db
+from app.resources.models import db, jwt
 from app.resources.routes import api
-bcrypt = Bcrypt()
+
 
 
 def create_app(config_name):
@@ -14,7 +14,7 @@ def create_app(config_name):
     if config_name == 'local':
         app.config.from_object(DevelopmentConfig)
     api.init_app(app)
-    # bcrypt.init_app(app)
+    jwt.init_app(app)
     with app.app_context():
         db.init_app(app)
         db.create_all()

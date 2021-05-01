@@ -7,7 +7,6 @@ name = "pypi"
 flask-restplus = "*"
 flask = "*"
 sqlalchemy = "*"
-flask-jwt-extended = "*"
 flask-restful = "*"
 flask-sqlalchemy = "*"
 jsonify = "*"
@@ -17,6 +16,8 @@ flask-bcrypt = "*"
 python-dotenv = "*"
 psycopg2-binary = "*"
 werkzeug = "==0.16.1"
+flask-jwt-extended = "*"
+
 [dev-packages]
 
 [requires]

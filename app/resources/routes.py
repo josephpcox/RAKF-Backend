@@ -61,17 +61,13 @@ class Login(Resource):
     def post(self):
         try:
             requested_data = self.parser.parse_args(strict=True)
-            login_user = User.userLogin(requested_data)
-            print('this will be logged later')
-            print(login_user)
-            if login_user is not None:
-                token = 'some token I will genereate later'
-                status = 200
+            token = User.userLogin(requested_data)
+            if token is not None:
+                return {'token':token,'status':200}
             else:
                 api.abort(404)
         except Exception as e:
             return {'msg':str(e)},500
-        return {'token':token,'msg':''},200
 
 
 @api.route('/admin/get_users')
