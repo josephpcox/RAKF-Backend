@@ -4,7 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+flask-restplus = "*"
 flask = "*"
+sqlalchemy = "*"
 flask-jwt-extended = "*"
 flask-restful = "*"
 flask-sqlalchemy = "*"
@@ -14,7 +16,7 @@ bcrypt = "*"
 flask-bcrypt = "*"
 python-dotenv = "*"
 psycopg2-binary = "*"
-
+werkzeug = "==0.16.1"
 [dev-packages]
 
 [requires]
