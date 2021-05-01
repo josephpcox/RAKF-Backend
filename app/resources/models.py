@@ -47,6 +47,13 @@ class User(db.Model):
         return user.get_json()
 
     @classmethod
+    def get_users(cls):
+        result = []
+        for r in cls.query.all():
+            result.append(r.get_json())
+        return result
+
+    @classmethod
     def get_user_by_email(cls,email):
         user=cls.query.filter_by(email=email).first()
         return user.get_json()

@@ -74,6 +74,28 @@ class Login(Resource):
         return {'token':token,'msg':''},200
 
 
+@api.route('/admin/get_users')
+class AdminManageUsers(Resource):
+    response = {
+        200:'OK',
+        204:'No Content',
+        400:'Bad Input',
+        404:'Forbidden',
+        500:'server error'
+    }
+    @api.doc(response)
+    def get(self):
+        try:
+            result = User.get_users()
+            if not result:
+                api.abort(204)
+            else:
+                return result, 200
+        except Exception as e:
+            return {'msg':str(e)},500
+
+
+
 
 
 
