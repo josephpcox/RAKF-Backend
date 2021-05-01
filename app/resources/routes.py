@@ -1,5 +1,14 @@
 from flask import Flask
 from flask_restplus import reqparse,Resource, Api
+from app.resources.models import(
+    User, 
+    PermissionMembership, 
+    PermissionGroupMeta, 
+    PermissionEntries,
+    Fish,
+    Event,
+)
+
 api = Api()
 
 
@@ -11,22 +20,27 @@ class Register(Resource):
         400:'Bad Input',
         404:"Forbidden"
     }
+    parser = api.parser()
+    parser.add_argument('first_name', type=str, help='first name is required.', required=True)
+    parser.add_argument('last_name', type=str, help='last name is required.', required=True)
+    parser.add_argument('email', type=str, help='email is required.', required=True)
+    parser.add_argument('password', type=str, help='password is required', required=True)
+
     @api.doc(response)
+    @api.expect(parser)
     def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('first_name', type=str, help='first name is required.', required=True)
-        parser.add_argument('last_name', type=str, help='last name is required.', required=True)
-        parser.add_argument('email', type=str, help='email is required.', required=True)
-        parser.add_argument('password', type=str, help='password is required', required=True)
-        requested_data = parser.parse_args(strict=True)
-        success = User.register(requested_data)  # create the new user
-        if success:
-              # store the user in the database
-            msg = 'user has been created'  # return message and ok status code back to client
-            status = 200
-        else:
-            msg = 'error in entering new user into the databse'
-            status = 400
+        try:
+            requested_data = self.parser.parse_args(strict=True)
+            success = User.register(requested_data)  # create the new user
+            if success:
+                # store the user in the database
+                msg = 'user has been created'  # return message and ok status code back to client
+                status = 200
+            else:
+                api.abort(400)
+        except Exception as e:
+            return {'msg':str(e)},500
+        
         return msg,status
 
 
