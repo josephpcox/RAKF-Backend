@@ -42,6 +42,11 @@ class User(db.Model):
         return True
 
     @classmethod
+    def userLogin(cls,user_data):
+        user=cls.query.filter_by(email=user_data['email'], password=user_data['password']).first()
+        return user.get_json()
+
+    @classmethod
     def get_user_by_email(cls,email):
         user=cls.query.filter_by(email=email).first()
         return user.get_json()

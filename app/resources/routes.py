@@ -6,7 +6,7 @@ from app.resources.models import(
     PermissionGroupMeta, 
     PermissionEntries,
     Fish,
-    Event,
+    Event
 )
 
 api = Api()
@@ -18,7 +18,8 @@ class Register(Resource):
     response = {
         200:'OK',
         400:'Bad Input',
-        404:"Forbidden"
+        404:'Forbidden',
+        500:'server error'
     }
     parser = api.parser()
     parser.add_argument('first_name', type=str, help='first name is required.', required=True)
@@ -42,6 +43,36 @@ class Register(Resource):
             return {'msg':str(e)},500
         
         return msg,status
+
+@api.route('/login')
+class Login(Resource):
+    response = {
+        200:'OK',
+        400:'Bad Input',
+        404:'Forbidden',
+        500:'server error'
+    }
+    parser = api.parser()
+    parser.add_argument('email', type=str, help='email is required.', required=True)
+    parser.add_argument('password', type=str, help='password is required', required=True)
+
+    @api.doc(response)
+    @api.expect(parser)
+    def post(self):
+        try:
+            requested_data = self.parser.parse_args(strict=True)
+            login_user = User.userLogin(requested_data)
+            print('this will be logged later')
+            print(login_user)
+            if login_user is not None:
+                token = 'some token I will genereate later'
+                status = 200
+            else:
+                api.abort(404)
+        except Exception as e:
+            return {'msg':str(e)},500
+        return {'token':token,'msg':''},200
+
 
 
 
