@@ -2,10 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc
 from datetime import datetime,timedelta
 import os
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import create_access_token, JWTManager
 
 jwt = JWTManager()
 db = SQLAlchemy()
@@ -50,6 +47,8 @@ class User(db.Model):
     @classmethod
     def userLogin(cls,user_data):
         user=cls.query.filter_by(email=user_data['email'], password=user_data['password']).first()
+        if not user:
+             raise Exception("User not found")   
         access_token = create_access_token(identity=user.user_id)
         return access_token
 

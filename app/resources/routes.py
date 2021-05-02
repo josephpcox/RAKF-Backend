@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restplus import reqparse,Resource, Api
+from flask_jwt_extended import get_jwt_identity,jwt_required
 from app.resources.models import(
     User, 
     PermissionMembership, 
@@ -79,9 +80,11 @@ class AdminManageUsers(Resource):
         404:'Forbidden',
         500:'server error'
     }
+    @jwt_required()
     @api.doc(response)
     def get(self):
         try:
+            user_id=get_jwt_identity()
             result = User.get_users()
             if not result:
                 api.abort(204)

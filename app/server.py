@@ -13,8 +13,8 @@ def create_app(config_name):
     app = Flask(__name__)
     if config_name == 'local':
         app.config.from_object(DevelopmentConfig)
-    api.init_app(app)
     jwt.init_app(app)
+    api.init_app(app)
     with app.app_context():
         db.init_app(app)
         db.create_all()
