@@ -37,7 +37,6 @@ class User(db.Model):
     def get_json(self):
         return {'id':self.user_id, 'first name': self.first_name, 'last name': self.last_name, 'email': self.email}
     
-
     @classmethod
     def register(cls,user_data):
         new_user = User(**user_data)
@@ -71,15 +70,12 @@ class User(db.Model):
         user.delete()
         return True
     
-    
-
 class PermissionMembership(db.Model):
     __tablename__ = 'permission_membership'
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False,
                         primary_key=True)
     group_id = db.Column(db.Integer, db.ForeignKey('permission_group_meta.group_id', ondelete='CASCADE'),
                          nullable=False, primary_key=True)
-
 
 class PermissionGroupMeta(db.Model):
     __tablename__ = 'permission_group_meta'
@@ -89,7 +85,6 @@ class PermissionGroupMeta(db.Model):
     # group_id_fk = relationship("permission_entries.group_id", backref="parent", passive_deletes=True)
     # group_id_fk_2 = relationship("permission_membership.group_id", backref="parent", passive_deletes=True)
 
-
 class PermissionEntries(db.Model):
     __tablename__ = 'permission_entries'
     group_id = db.Column(db.Integer, db.ForeignKey('permission_group_meta.group_id', ondelete='CASCADE'),
@@ -97,14 +92,41 @@ class PermissionEntries(db.Model):
     permission = db.Column(db.String(50), nullable=False, primary_key=True)
     value = db.Column(db.Boolean, nullable=False, default=True)
 
-
 class Fish(db.Model):
     __tablename__ = 'fish'
     fish_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fishName = db.Column(db.String(320), unique=True, nullable=False)
-
-
 class Event(db.Model):
     __tablename__ = 'events'
     event_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     event_name = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, event_name):
+        self.event_name = event_name
+
+    def save_event(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()  # delete the user from the database
+
+    def get_json(self):
+        return {'id':self.event_id, 'event name': self.event_name}
+
+    @classmethod
+    def create_event(cls, event_name):
+        event = Event(event_name)
+        event.save_event()
+        return True
+
+    @classmethod
+    def get_events(cls):
+        result = []
+        for r in cls.query.all():
+            result.append(r.get_json())
+        return result
+
+
+

@@ -12,8 +12,6 @@ from app.resources.models import(
 
 api = Api()
 
-
-
 @api.route('/register')
 class Register(Resource):
     response = {
@@ -72,7 +70,7 @@ class Login(Resource):
 
 
 @api.route('/admin/get_users')
-class AdminManageUsers(Resource):
+class AdminGetUsers(Resource):
     response = {
         200:'OK',
         204:'No Content',
@@ -84,9 +82,48 @@ class AdminManageUsers(Resource):
     @api.doc(response)
     def get(self):
         try:
-            user_id=get_jwt_identity()
             result = User.get_users()
-            if not result:
+            if result is None:
+                api.abort(204)
+            else:
+                return result, 200
+        except Exception as e:
+            return {'msg':str(e)},500
+
+@api.route('/admin/create_event/<string:event_name>')
+class AdminCreateEvent(Resource):
+    response = {
+        200:'OK',
+        204:'No Content',
+        400:'Bad Input',
+        404:'Forbidden',
+        500:'server error'
+    }
+    @api.doc(response)
+    @jwt_required()
+    def post(self,event_name):
+        try:
+            if Event.create_event(event_name) is True:
+                 return {'msg':'event created'},200,
+            else:
+                api.abort(400)
+        except Exception as e:
+            return {'msg':str(e)},500
+
+@api.route('/admin/get_events')
+class AdminGetEvents(Resource):
+    response = {
+        200:'OK',
+        204:'No Content',
+        400:'Bad Input',
+        404:'Forbidden',
+        500:'server error'
+    }
+    @jwt_required()
+    def get(self):
+        try:
+            result = Event.get_events()
+            if result is None:
                 api.abort(204)
             else:
                 return result, 200
