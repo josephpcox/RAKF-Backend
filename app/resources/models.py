@@ -95,7 +95,35 @@ class PermissionEntries(db.Model):
 class Fish(db.Model):
     __tablename__ = 'fish'
     fish_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fishName = db.Column(db.String(320), unique=True, nullable=False)
+    fish_name = db.Column(db.String(320), unique=True, nullable=False)
+
+    def __init__(self, fish_name):
+        self.fish_name = fish_name
+
+    def save_fish(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit() 
+
+    def get_json(self):
+        return {'id':self.fish_id, 'fish name': self.fish_name}
+
+    @classmethod
+    def create_fish(cls, fish_name):
+        fish = Fish(fish_name)
+        fish.save_fish()
+        return True
+
+    @classmethod
+    def get_fish(cls):
+        result = []
+        for r in cls.query.all():
+            result.append(r.get_json())
+        return result
+
 class Event(db.Model):
     __tablename__ = 'events'
     event_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -110,7 +138,7 @@ class Event(db.Model):
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit()  # delete the user from the database
+        db.session.commit() 
 
     def get_json(self):
         return {'id':self.event_id, 'event name': self.event_name}

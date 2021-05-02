@@ -12,7 +12,7 @@ from app.resources.models import(
 
 api = Api()
 
-@api.route('/register')
+@api.route('/user/register')
 class Register(Resource):
     response = {
         200:'OK',
@@ -43,7 +43,7 @@ class Register(Resource):
         
         return msg,status
 
-@api.route('/login')
+@api.route('/user/login')
 class Login(Resource):
     response = {
         200:'OK',
@@ -101,7 +101,7 @@ class AdminCreateEvent(Resource):
     }
     @api.doc(response)
     @jwt_required()
-    def post(self,event_name):
+    def post(self, event_name):
         try:
             if Event.create_event(event_name) is True:
                  return {'msg':'event created'},200,
@@ -119,10 +119,52 @@ class AdminGetEvents(Resource):
         404:'Forbidden',
         500:'server error'
     }
+    @api.doc(response)
     @jwt_required()
     def get(self):
         try:
             result = Event.get_events()
+            if result is None:
+                api.abort(204)
+            else:
+                return result, 200
+        except Exception as e:
+            return {'msg':str(e)},500
+
+@api.route('/admin/create_fish/<string:fish_name>')
+class AdminCreateFish(Resource):
+    response = {
+        200:'OK',
+        204:'No Content',
+        400:'Bad Input',
+        404:'Forbidden',
+        500:'server error'
+    }
+    @jwt_required()
+    @api.doc(response)
+    def post(self, fish_name):
+        try:
+            if Fish.create_fish(fish_name) is True:
+                 return {'msg':'fish created'},200,
+            else:
+                api.abort(400)
+        except Exception as e:
+            return {'msg':str(e)},500
+
+@api.route('/admin/get_fish')
+class AdminGetFish(Resource):
+    response = {
+        200:'OK',
+        204:'No Content',
+        400:'Bad Input',
+        404:'Forbidden',
+        500:'server error'
+    }
+    @jwt_required()
+    @api.doc(response)
+    def get(self):
+        try:
+            result = Fish.get_fish()
             if result is None:
                 api.abort(204)
             else:
