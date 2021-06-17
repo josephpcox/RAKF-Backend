@@ -1,4 +1,7 @@
 from flask import Flask
+from app.authentication import auth
+from app.authentication.auth import AuthError,requires_auth
+from flask_cors import cross_origin
 from flask_restplus import reqparse,Resource, Api
 from flask_jwt_extended import get_jwt_identity,jwt_required
 from app.resources.models import(
@@ -78,7 +81,7 @@ class AdminGetUsers(Resource):
         404:'Forbidden',
         500:'server error'
     }
-    @jwt_required()
+    @requires_auth
     @api.doc(response)
     def get(self):
         try:
@@ -100,7 +103,7 @@ class AdminCreateEvent(Resource):
         500:'server error'
     }
     @api.doc(response)
-    @jwt_required()
+    @requires_auth
     def post(self, event_name):
         try:
             if Event.create_event(event_name) is True:
@@ -120,7 +123,7 @@ class AdminGetEvents(Resource):
         500:'server error'
     }
     @api.doc(response)
-    @jwt_required()
+    @requires_auth
     def get(self):
         try:
             result = Event.get_events()
@@ -140,7 +143,7 @@ class AdminCreateFish(Resource):
         404:'Forbidden',
         500:'server error'
     }
-    @jwt_required()
+    @requires_auth
     @api.doc(response)
     def post(self, fish_name):
         try:
@@ -160,7 +163,7 @@ class AdminGetFish(Resource):
         404:'Forbidden',
         500:'server error'
     }
-    @jwt_required()
+    @requires_auth
     @api.doc(response)
     def get(self):
         try:
