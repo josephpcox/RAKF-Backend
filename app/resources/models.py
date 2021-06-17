@@ -70,27 +70,6 @@ class User(db.Model):
         user.delete()
         return True
     
-class PermissionMembership(db.Model):
-    __tablename__ = 'permission_membership'
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False,
-                        primary_key=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('permission_group_meta.group_id', ondelete='CASCADE'),
-                         nullable=False, primary_key=True)
-
-class PermissionGroupMeta(db.Model):
-    __tablename__ = 'permission_group_meta'
-    group_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(50), nullable=False)
-    priority = db.Column(db.Integer, nullable=True, default=0)
-    # group_id_fk = relationship("permission_entries.group_id", backref="parent", passive_deletes=True)
-    # group_id_fk_2 = relationship("permission_membership.group_id", backref="parent", passive_deletes=True)
-
-class PermissionEntries(db.Model):
-    __tablename__ = 'permission_entries'
-    group_id = db.Column(db.Integer, db.ForeignKey('permission_group_meta.group_id', ondelete='CASCADE'),
-                         nullable=False, primary_key=True)
-    permission = db.Column(db.String(50), nullable=False, primary_key=True)
-    value = db.Column(db.Boolean, nullable=False, default=True)
 
 class Fish(db.Model):
     __tablename__ = 'fish'

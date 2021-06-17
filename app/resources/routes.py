@@ -6,9 +6,6 @@ from flask_restplus import reqparse,Resource, Api
 from flask_jwt_extended import get_jwt_identity,jwt_required
 from app.resources.models import(
     User, 
-    PermissionMembership, 
-    PermissionGroupMeta, 
-    PermissionEntries,
     Fish,
     Event
 )
