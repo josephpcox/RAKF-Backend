@@ -12,7 +12,7 @@ class DevelopmentConfig(Config):
     DEBUG=os.environ.get('DEBUG')
     TESTING=os.environ.get('TESTING')
     FLASK_APP = os.environ.get('FLASK_APP')
-    API_AUDIENCE="http://127.0.0.1:5000/"
+    API_AUDIENCE=os.environ.get('AUTH0_AUDIENCE')
     ALGORITHMS = ["RS256"]
     AUTH0_DOMAIN = "throbbing-limit-3140.us.auth0.com"
 
