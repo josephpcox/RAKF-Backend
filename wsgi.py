@@ -11,4 +11,4 @@ if __name__=="__main__":
         load_dotenv('dev.env')
         from app.server import create_app
         app=create_app(config_name="local")
-        app.run(host="0.0.0.0", port=os.environ.get('PORT'), debug=True)
+        app.run(host="0.0.0.0", ssl_context='adhoc', port=os.environ.get('PORT'), debug=True)
